@@ -18,6 +18,10 @@ Route::group([
             Route::get('/support/ticket/index', App\Livewire\User\Support\Ticket\Index::class)->name('user.support.ticket.index');
             Route::get('/support/ticket/view/{id}', App\Livewire\User\Support\Ticket\View::class)->name('user.support.ticket.view');
 
+            Route::get('/game/index', App\Livewire\User\Game\Index::class)->name('user.game.index');
+            Route::get('/game/play/{id}', App\Livewire\User\Game\Play::class)->name('user.game.play');
+
+
             Route::redirect('settings', 'settings/profile');
             Route::redirect('settings', 'settings/profile');
 
@@ -36,6 +40,8 @@ Route::group([
 
             Route::get('/content-management/article/index', App\Livewire\Administrator\ContentManagement\Article\Index::class)->name('administrator.content-management.article.index');
             Route::get('/content-management/faq/index', App\Livewire\Administrator\ContentManagement\Faq\Index::class)->name('administrator.content-management.faq.index');
+
+            Route::get('/game-management/game/index', App\Livewire\Administrator\GameManagement\Index::class)->name('administrator.game-management.index');
 
             Route::get('/support-management/ticket/index', App\Livewire\Administrator\SupportManagement\Ticket\Index::class)->name('administrator.support-management.ticket.index');
             Route::get('/support-management/ticket/view/{id}', App\Livewire\Administrator\SupportManagement\Ticket\View::class)->name('administrator.support-management.ticket.view');

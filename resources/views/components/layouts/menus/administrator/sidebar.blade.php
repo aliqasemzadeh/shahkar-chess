@@ -32,6 +32,9 @@
                 @endcan
             </flux:navlist.group>
         @endcan
+        @can('administrator_game_index')
+                <flux:navlist.item icon="chess" :href="route('administrator.game-management.index')" :current="request()->routeIs('administrator.game-management.index')" wire:navigate>{{ __('jetadmin.game_management') }}</flux:navlist.item>
+        @endcan
         @can('administrator_support_management')
             <flux:navlist.group heading="{{ __('jetadmin.support_management') }}" class="grid" expandable  :expanded="request()->routeIs('administrator.support-management.*')">
                 @can('administrator_support_ticket_index')

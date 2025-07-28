@@ -50,6 +50,14 @@ return [
         'administrator_content_article_edit' => 'Administrator Content Management Article Edit',
         'administrator_content_article_delete' => 'Administrator Content Management Article Delete',
 
+
+        'administrator_game_management' => 'Administrator Game Management',
+
+        'administrator_game_index' => 'Administrator Game Index',
+        'administrator_game_create' => 'Administrator Game Create',
+        'administrator_game_edit' => 'Administrator Game Edit',
+        'administrator_game_delete' => 'Administrator Game Delete',
+
         'administrator_support_management' => 'Administrator Support Management',
         'administrator_support_ticket_index' => 'Administrator Support Ticket Index',
         'administrator_support_ticket_view' => 'Administrator Support Ticket View',
