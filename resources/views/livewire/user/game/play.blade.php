@@ -101,6 +101,7 @@
                 <div class="text-center">
                     <flux:icon name="chess" class="w-16 h-16 text-gray-400 mb-4" />
                     <p class="text-gray-500 dark:text-gray-400">{{ __('jetadmin.chess_board_coming_soon') }}</p>
+                    <div class="board board-large" id="board"></div>
                 </div>
             </div>
         </flux:card>
@@ -109,6 +110,9 @@
 
 @script
 <script>
-    alert("Hi")
+    new Chessboard(document.getElementById("board"), {
+        assetsUrl: "../assets/",
+        position: FEN.start
+    })
 </script>
 @endscript
