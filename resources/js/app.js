@@ -3,6 +3,8 @@ import './../../vendor/power-components/livewire-powergrid/dist/tailwind.css';
 import 'flatpickr/dist/flatpickr.min.css';
 import flatpickr from "flatpickr";
 
+
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
