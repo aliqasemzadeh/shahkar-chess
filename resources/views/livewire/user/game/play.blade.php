@@ -111,7 +111,7 @@
 @script
 <script>
     new Chessboard(document.getElementById("board"), {
-        assetsUrl: "../assets/",
+        assetsUrl: "{{ url('assets') }}/",
         position: FEN.start
     })
 </script>
