@@ -101,7 +101,7 @@
                 <div class="text-center">
                     <flux:icon name="chess" class="w-16 h-16 text-gray-400 mb-4" />
                     <p class="text-gray-500 dark:text-gray-400">{{ __('jetadmin.chess_board_coming_soon') }}</p>
-                    <div class="board board-large" id="board"></div>
+                    <div wire:ignore class="board board-large" id="board"></div>
                 </div>
             </div>
         </flux:card>
@@ -110,9 +110,89 @@
 
 @script
 <script>
-    new Chessboard(document.getElementById("board"), {
+    const chess = new Chess()
+
+    let seed = 71;
+    function random() {
+        const x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+    }
+    function makeEngineMove(chessboard) {
+        const possibleMoves = chess.moves({verbose: true})
+        if (possibleMoves.length > 0) {
+            const randomIndex = Math.floor(random() * possibleMoves.length)
+            const randomMove = possibleMoves[randomIndex]
+            setTimeout(() => { // smoother with 500ms delay
+                chess.move({from: randomMove.from, to: randomMove.to})
+                chessboard.setPosition(chess.fen(), true)
+                chessboard.enableMoveInput(inputHandler, COLOR.white)
+            }, 500)
+        }
+    }
+
+    function inputHandler(event) {
+        console.log("inputHandler", event)
+        if(event.type === INPUT_EVENT_TYPE.movingOverSquare) {
+            return // ignore this event
+        }
+        if(event.type !== INPUT_EVENT_TYPE.moveInputFinished) {
+            event.chessboard.removeLegalMovesMarkers()
+        }
+        if (event.type === INPUT_EVENT_TYPE.moveInputStarted) {
+            // mark legal moves
+            const moves = chess.moves({square: event.squareFrom, verbose: true})
+            event.chessboard.addLegalMovesMarkers(moves)
+            return moves.length > 0
+        } else if (event.type === INPUT_EVENT_TYPE.validateMoveInput) {
+            $wire.dispatch('handleMoveData');
+            const move = {from: event.squareFrom, to: event.squareTo, promotion: event.promotion}
+            const result = chess.move(move)
+            if (result) {
+                event.chessboard.state.moveInputProcess.then(() => { // wait for the move input process has finished
+                    event.chessboard.setPosition(chess.fen(), true).then(() => { // update position, maybe castled and wait for animation has finished
+                        makeEngineMove(event.chessboard)
+                    })
+                })
+            } else {
+                // promotion?
+                let possibleMoves = chess.moves({square: event.squareFrom, verbose: true})
+                for (const possibleMove of possibleMoves) {
+                    if (possibleMove.promotion && possibleMove.to === event.squareTo) {
+                        event.chessboard.showPromotionDialog(event.squareTo, COLOR.white, (result) => {
+                            console.log("promotion result", result)
+                            if (result.type === PROMOTION_DIALOG_RESULT_TYPE.pieceSelected) {
+                                chess.move({from: event.squareFrom, to: event.squareTo, promotion: result.piece.charAt(1)})
+                                event.chessboard.setPosition(chess.fen(), true)
+                                makeEngineMove(event.chessboard)
+                            } else {
+                                // promotion canceled
+                                event.chessboard.enableMoveInput(inputHandler, COLOR.white)
+                                event.chessboard.setPosition(chess.fen(), true)
+                            }
+                        })
+                        return true
+                    }
+                }
+            }
+            return result
+        } else if (event.type === INPUT_EVENT_TYPE.moveInputFinished) {
+            if(event.legalMove) {
+                event.chessboard.disableMoveInput()
+            }
+        }
+    }
+
+    const board = new Chessboard(document.getElementById("board"), {
+        position: chess.fen(),
         assetsUrl: "{{ url('assets') }}/",
-        position: FEN.start
+        style: {borderType: BORDER_TYPE.none, pieces: {file: "{{ url('assets/pieces/staunty.svg') }}"}, animationDuration: 300},
+        orientation: COLOR.white,
+        extensions: [
+            {class: Markers, props: {autoMarkers: MARKER_TYPE.square}},
+            {class: PromotionDialog},
+            {class: Accessibility, props: {visuallyHidden: true}}
+        ]
     })
+    board.enableMoveInput(inputHandler, COLOR.white)
 </script>
 @endscript
